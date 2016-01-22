@@ -80,6 +80,8 @@ dataCPCB <- dplyr::select(dataCPCB,
 # # might be useful later
 # dataOpenAQ <- unique(dataOpenAQ)
 # save(dataOpenAQ, file="dataOpenAQ.RData")
+# write.table(dataOpenAQ, row.names=FALSE, file="dataOpenAQ.csv",
+#             sep=",")
 load("dataOpenAQ.RData")
 
 ######################################################
