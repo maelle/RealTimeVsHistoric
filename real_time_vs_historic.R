@@ -88,31 +88,51 @@ load("dataOpenAQ.RData")
 # NOW PUT IT IN SHAPE
 ######################################################
 dataOpenAQ <- dplyr::mutate(dataOpenAQ,
-                            valueOpenAQ=value,
+                            openAQValue=value,
                             station=location)
 dataOpenAQ <- dplyr::select(dataOpenAQ,
                             dateLocal,
                             station,
-                            valueOpenAQ)
+                            openAQValue)
 
 ######################################################
 # EXPLORATION
 ######################################################
-for (station in levels(as.factor(dataOpenAQ$station))){
-  print(station)
-  minDate <- min(dataOpenAQ$dateLocal[dataOpenAQ$station==station])
-  dataTempCPCB <- dataCPCB[dataCPCB$station==station&
-                         dataCPCB$dateLocal>=minDate,]
-  maxDate <- max(dataTempCPCB$dateLocal)
-  dataTempOpenAQ <- dataOpenAQ[dataOpenAQ$station==station&
-                                 dataOpenAQ$dateLocal<=maxDate]
+for (stationNow in levels(as.factor(dataOpenAQ$station))){
+  print(stationNow)
+  
+  # filter only data for the station
+  dataTempCPCB <- dataCPCB[dataCPCB$station==stationNow,]
+  dataTempOpenAQ <- dataOpenAQ[dataOpenAQ$station==stationNow,]
+  
+  # now filter only dates with data from both sources
+  minDate <- min(dataTempOpenAQ$dateLocal)
+  maxDate <- max(dataCPCB$dateLocal)
+  
+  dataTempCPCB <- dplyr::filter(dataTempCPCB,
+                                dateLocal>=minDate)
+
+  dataTempOpenAQ <- dplyr::filter(dataTempOpenAQ,
+                                  dateLocal<=maxDate)
+  
+  # now combine both data sets
+  dataTempCPCB <- dplyr::mutate(dataTempCPCB,
+                                sourceData="historic",
+                                value=historicValue)%>%
+    dplyr::select(dateLocal,
+                  value,
+                  sourceData)
+  dataTempOpenAQ <- dplyr::mutate(dataTempOpenAQ,
+                                  sourceData="Open AQ",
+                                  value=openAQValue)%>%
+    dplyr::select(dateLocal,
+                  value,
+                  sourceData)
+  dataForPlot <- rbind(dataTempCPCB, dataTempOpenAQ)
+  
   p <- ggplot() + 
-    geom_point(data=dataOpenAQ,
-              aes(x=dateLocal, y=valueOpenAQ),
-              col="purple")+ 
-    geom_point(data=dataTempCPCB,
-              aes(x=dateLocal, y=historicValue),
-              col="blue")+
-    ggtitle(station)
-  ggsave(p, file=paste0(station,".png"))
+    geom_point(data=dataForPlot,
+              aes(x=dateLocal, y=value, col=sourceData))+ 
+    ggtitle(stationNow)+ facet_grid(sourceData ~ .)
+  ggsave(p, file=paste0(stationNow,".png"))
 }
