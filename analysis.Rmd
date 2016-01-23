@@ -2,7 +2,7 @@
 title: "PM2.5 Delhi, data sources"
 author: "Maëlle Salmon"
 date: "23 janvier 2016"
-output: word_document
+output: html_document
 ---
 
 Maybe it's nicer to have a readable document with the analysis!
@@ -153,7 +153,7 @@ for (stationNow in levels(as.factor(dataOpenAQ$station))){
   p <- ggplot() + 
     geom_point(data=dataForPlot,
               aes(x=dateLocal, y=value, col=sourceData))+ 
-    ggtitle(stationNow)+ facet_grid(sourceData ~ .)
+    ggtitle(stationNow)#+ facet_grid(sourceData ~ .)
   print(p)
 }
 

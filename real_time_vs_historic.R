@@ -136,3 +136,8 @@ for (stationNow in levels(as.factor(dataOpenAQ$station))){
     ggtitle(stationNow)+ facet_grid(sourceData ~ .)
   ggsave(p, file=paste0(stationNow,".png"))
 }
+
+
+# One day, one station
+dataOA <- dataOpenAQ[station=="RK Puram"&day(dateLocal)==300,]
+dataH <- dataCPCB[station=="RK Puram"&day(dateLocal)==300,]
