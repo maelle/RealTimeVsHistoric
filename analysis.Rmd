@@ -2,10 +2,10 @@
 title: "PM2.5 Delhi, data sources"
 author: "Maëlle Salmon"
 date: "23 janvier 2016"
-output: html_document
+output: word_document
 ---
 
-Maybe it's nicer to have a html document with the analysis!
+Maybe it's nicer to have a readable document with the analysis!
 
 So, the goal is to compare historic PM2.5 values for Delhi as found on the CPCB website by Eric Dodge to values queried from OpenAQ.
 
